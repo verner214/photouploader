@@ -38,8 +38,11 @@ var fixedTufuSave = function (desPath) {
     return this;
 };
 
-
-app.use(bodyParser({ defer: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+//app.use(bodyParser({ defer: true }));
 
 app.get('/', function (req, res) {
     res.send(
