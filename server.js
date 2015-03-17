@@ -12,7 +12,7 @@ var azure = require("azure-storage");
 var bodyParser = require('body-parser'); //connects bodyParsing middleware
 var formidable = require('formidable');
 var path = require('path');     //used for file path
-var fs =require('fs-extra');    //File System-needed for renaming file etc
+var fs = require('fs-extra');    //File System-needed for renaming file etc
 var tufu = require("tufu");//gör thumbnails
 
 var app = express();
@@ -20,6 +20,24 @@ var containerName = "photos";
 var AZURE_STORAGE_ACCOUNT = "portalvhdsgfh152bhy290k";
 var AZURE_STORAGE_ACCESS_KEY = "blSI3p0IIYZJkojYyc27+5Jm82TmjaYbjEthG+f8fTT615DVeBJ2MMc3gNPyW5dSRaPpeWa2cJ/NE7ypqWTvkw==";
 var hostName = "https://" + AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net";
+
+var fixedTufuSave = function (desPath) {
+    var encodeData = this.codec.encode(this.imageData, this.quality);
+    fs.open(desPath ? desPath : this.src, 'w+', function (err, fd) {
+        if (err)
+            console.log(err);
+        else {
+            fs.writeSync(fd, encodeData.data, 0, encodeData.data.length);
+            fs.closeSync(fd);
+        }
+        console.log("end of fs.open own");
+    });
+    //reset quality
+    this.quality = 100;
+    console.log("end of fs.open2 own");
+    return this;
+};
+
 
 app.use(bodyParser({ defer: true }));
 
@@ -58,11 +76,13 @@ app.post('/upload', function (req, res, next) {
         console.log("lastModifiedDate: "+JSON.stringify(files.fileUploaded.lastModifiedDate));
 
         var orginalJPG = tufu(files.fileUploaded.path);
+        orginalJPG.save = fixedTufuSave;
 
         orginalJPG.resize(100, 100);
         orginalJPG.save("t_" + files.fileUploaded.path);
 
         res.end();
+        console.log("end of function");
     });
 
 });
