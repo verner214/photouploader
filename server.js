@@ -44,6 +44,16 @@ app.use(bodyParser.urlencoded({
 }));
 //app.use(bodyParser({ defer: true }));
 
+var uploadDir = "upload";
+var thumbPrefix = "t_";
+var thumbDir = thumbPrefix + uploadDir;
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+if (!fs.existsSync(thumbDir)) {
+    fs.mkdirSync(thumbDir);
+}
+
 app.get('/', function (req, res) {
     res.send(
     '<a href="/upload">ladda upp med stream</a></br>' +
@@ -64,7 +74,7 @@ app.post('/upload', function (req, res, next) {
 
     var form = new formidable.IncomingForm();
     //Formidable uploads to operating systems tmp dir by default
-    form.uploadDir = "";       //set upload directory
+    form.uploadDir = uploadDir;       //set upload directory
     form.keepExtensions = true;     //keep file extension
 
     form.parse(req, function(err, fields, files) {
@@ -82,7 +92,25 @@ app.post('/upload', function (req, res, next) {
         orginalJPG.save = fixedTufuSave;
 
         orginalJPG.resize(100, 100);
-        orginalJPG.save("t_" + files.fileUploaded.path);
+        var thumbfil = thumbPrefix + files.fileUploaded.path;
+        orginalJPG.save(thumbfil);
+        /*
+        var bs = azure.createBlobService();
+        bs.createBlockBlobFromFile('c', 'test.png', path, function (error) { });
+        res.send("OK");
+        */
+        var blobService = azure.createBlobService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+        console.log(blobService);
+        blobService.createBlockBlobFromLocalFile(containerName, files.fileUploaded.name,
+            thumbfil, function (error) {
+                if (error) throw error;
+                /*
+                fs.unlink(thumbfil, function (err) {
+                    if (err) throw err;
+                    console.log('successfully deleted ' + thumbfil);
+                });
+                */
+            });
 
         res.end();
         console.log("end of function");
