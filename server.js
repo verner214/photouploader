@@ -116,6 +116,7 @@ app.post('/upload', function (req, res, next) {
         res.write('nu ska vi spara orginalfilen i BLOB.\n\n');
         console.log('nu ska vi spara orginalfilen i BLOB');
         blobService.createBlockBlobFromLocalFile(containerName, files.fileUploaded.name, files.fileUploaded.path, function (error) {
+            res.write('nu ska vi spara orginalfilen i BLOB, error = ' + error + '\n\n');
             if (error) throw error;
             urlOrginal = "urlOrginal";
             saveRow();
@@ -129,6 +130,7 @@ app.post('/upload', function (req, res, next) {
         res.write('nu ska vi spara thumbnail på DISK.\n\n');
         console.log('nu ska vi spara thumbnail på DISK');
         orginalJPG.save(thumbfil, function (err) {
+            res.write('nu ska vi spara thumbnail på DISK, error = ' + err + '\n\n');
             if (err) throw err;//senare kanske bara avbryta här men låta webbservern leva vidare
             console.log('nu ska vi spara thumbnail i BLOB');
             blobService.createBlockBlobFromLocalFile(containerName, "t_" + files.fileUploaded.name, thumbfil, function (error) {
