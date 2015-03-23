@@ -17,15 +17,18 @@ var tufu = require("tufu");//gör thumbnails
 
 var app = express();
 var containerName = "photos";
+var tableName = "photos";
 var AZURE_STORAGE_ACCOUNT = "portalvhdsgfh152bhy290k";
 var AZURE_STORAGE_ACCESS_KEY = "blSI3p0IIYZJkojYyc27+5Jm82TmjaYbjEthG+f8fTT615DVeBJ2MMc3gNPyW5dSRaPpeWa2cJ/NE7ypqWTvkw==";
 var hostName = "https://" + AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net";
+var rowid = 0;
 
 var fixedTufuSave = function (desPath, callback) {
     var encodeData = this.codec.encode(this.imageData, this.quality);
     fs.open(desPath ? desPath : this.src, 'w+', function (err, fd) {
         if (err) callback(err);
-        fs.write(fd, encodeData.data, 0, encodeData.data.length, function (err) {
+        console.log("dd" + encodeData.data.length);
+        fs.write(fd, encodeData.data, 0, encodeData.data.length, 0, function (err) {
             if (err) callback(err);
             fs.close(fd, function (err) {
                 if (err) callback(err);
@@ -80,8 +83,7 @@ app.post('/upload', function (req, res, next) {
 
     form.parse(req, function(err, fields, files) {
         res.writeHead(200, {'content-type': 'text/plain'});
-        res.write('received upload:\n\n');
-//        res.end();
+        res.write('received upload:' + files.fileUploaded.name + '\n\n');
 
 //debug
         console.log("form.bytesReceived");
@@ -100,10 +102,24 @@ app.post('/upload', function (req, res, next) {
         //console.log(blobService);
 
 //spara URL'er och metainfo i tabell
-        var saveRow = function() {
-            if (urlOrginal && urlThumbnail) {
-                console.log('nu ska vi spara i tabell');
-            }
+        var saveRow = function(callback) {
+            console.log('nu ska vi spara i tabell');
+            var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+            tableSvc.createTableIfNotExists(tableName, function (error, result, response) {
+                if (error) callback(error);
+
+                var entGen = azure.TableUtilities.entityGenerator;
+                var task = {
+                    PartitionKey: entGen.String('hometasks'),
+                    RowKey: entGen.String((rowid++).toString()),
+                    description: entGen.String('take out the trash'),
+                    dueDate: entGen.DateTime(new Date(Date.UTC(2015, 6, 20))),
+                };
+
+                tableSvc.insertEntity(tableName, task, function (error, result, response) {
+                    callback(error);
+                });
+            });
         }
 
 //thumbnail
@@ -113,38 +129,48 @@ app.post('/upload', function (req, res, next) {
         var thumbfil = thumbPrefix + files.fileUploaded.path;
 
 //spara stora filen i blob (kan vi göra efter resize lyckats)
-        res.write('nu ska vi spara orginalfilen i BLOB.\n\n');
         console.log('nu ska vi spara orginalfilen i BLOB');
-        blobService.createBlockBlobFromLocalFile(containerName, files.fileUploaded.name, files.fileUploaded.path, function (error) {
-            res.write('nu ska vi spara orginalfilen i BLOB, error = ' + error + '\n\n');
-            res.end();
-            if (error) throw error;
-            urlOrginal = "urlOrginal";
-            saveRow();
-            fs.unlink(files.fileUploaded.path, function (err) {
-                if (err) throw err;
-                console.log('successfully deleted ' + files.fileUploaded.path);
-            });
-        });
+        blobService.createBlockBlobFromLocalFile(containerName, files.fileUploaded.name, files.fileUploaded.path,
+            function (error, result, response) {
+                if (error) throw error;
+                console.log('result:' + result);
+                urlOrginal = blobService.getUrl(containerName, files.fileUploaded.name, null, hostName);
+                console.log('urlOrginal:' + urlOrginal);
+                if (urlThumbnail) {
+                    saveRow(function (err) {
+                        if (err) throw err;
+                        console.log('rad sparad i tabell');
+                    });
+                }
+                fs.unlink(files.fileUploaded.path, function (err) {
+                    if (err) throw err;
+                    console.log('fil raderad ' + files.fileUploaded.path);
+                });
+            }
+        );
 
 //save thumbnail och spara i blob.
-        res.write('nu ska vi spara thumbnail på DISK.\n\n');
         console.log('nu ska vi spara thumbnail på DISK');
         orginalJPG.save(thumbfil, function (err) {
-            res.write('nu ska vi spara thumbnail på DISK, error = ' + err + '\n\n');
-            res.end();
             if (err) throw err;//senare kanske bara avbryta här men låta webbservern leva vidare
             console.log('nu ska vi spara thumbnail i BLOB');
-            blobService.createBlockBlobFromLocalFile(containerName, "t_" + files.fileUploaded.name, thumbfil, function (error) {
+            blobService.createBlockBlobFromLocalFile(containerName, "t_" + files.fileUploaded.name, thumbfil,
+                function (error) {
                 if (error) throw error;
                 urlThumbnail = "urlThumbnail";
-                saveRow();
+                if (urlOrginal) {
+                    saveRow(function (err) {
+                        if (err) throw err;
+                        console.log('rad sparad i tabell');
+                    });
+                }
                 fs.unlink(thumbfil, function (err) {
                     if (err) throw err;
-                    console.log('successfully deleted ' + thumbfil);
+                    console.log('fil raderad ' + thumbfil);
                 });
             });
         });//orginalJPG.save
+        res.end();
     });//form.parse
 
 });//app.post('/upload'
