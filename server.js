@@ -21,20 +21,21 @@ var AZURE_STORAGE_ACCOUNT = "portalvhdsgfh152bhy290k";
 var AZURE_STORAGE_ACCESS_KEY = "blSI3p0IIYZJkojYyc27+5Jm82TmjaYbjEthG+f8fTT615DVeBJ2MMc3gNPyW5dSRaPpeWa2cJ/NE7ypqWTvkw==";
 var hostName = "https://" + AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net";
 
-var fixedTufuSave = function (desPath) {
+var fixedTufuSave = function (desPath, callback) {
     var encodeData = this.codec.encode(this.imageData, this.quality);
     fs.open(desPath ? desPath : this.src, 'w+', function (err, fd) {
-        if (err)
-            console.log(err);
-        else {
-            fs.writeSync(fd, encodeData.data, 0, encodeData.data.length);
-            fs.closeSync(fd);
-        }
-        console.log("end of fs.open own");
+        if (err) callback(err);
+        fs.write(fd, encodeData.data, 0, encodeData.data.length, function (err) {
+            if (err) callback(err);
+            fs.close(fd, function (err) {
+                if (err) callback(err);
+                console.log("fil sparad och stängd");
+                //reset quality
+                this.quality = 100;
+                callback(null);
+            });
+        });
     });
-    //reset quality
-    this.quality = 100;
-    console.log("end of fs.open2 own");
     return this;
 };
 
@@ -80,107 +81,67 @@ app.post('/upload', function (req, res, next) {
     form.parse(req, function(err, fields, files) {
         res.writeHead(200, {'content-type': 'text/plain'});
         res.write('received upload:\n\n');
-        //debug
+        res.end();
+
+//debug
         console.log("form.bytesReceived");
         console.log("file size: " + JSON.stringify(files.fileUploaded.size));
         console.log("file path: "+JSON.stringify(files.fileUploaded.path));
         console.log("file name: "+JSON.stringify(files.fileUploaded.name));
         console.log("file type: "+JSON.stringify(files.fileUploaded.type));
-        console.log("lastModifiedDate: "+JSON.stringify(files.fileUploaded.lastModifiedDate));
+        console.log("lastModifiedDate: " + JSON.stringify(files.fileUploaded.lastModifiedDate));
 
+//URL'er
+        var urlOrginal = null;
+        var urlThumbnail = null;
+
+//initiera blobanvändning
+        var blobService = azure.createBlobService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+        //console.log(blobService);
+
+//spara URL'er och metainfo i tabell
+        var saveRow = function() {
+            if (urlOrginal && urlThumbnail) {
+                console.log('nu ska vi spara i tabell');
+            }
+        }
+
+//thumbnail
         var orginalJPG = tufu(files.fileUploaded.path);
-        orginalJPG.save = fixedTufuSave;
-
+        orginalJPG.save = fixedTufuSave;//egen savemetod ersätter den befintliga
         orginalJPG.resize(100, 100);
         var thumbfil = thumbPrefix + files.fileUploaded.path;
-        orginalJPG.save(thumbfil);
-        /*
-        var bs = azure.createBlobService();
-        bs.createBlockBlobFromFile('c', 'test.png', path, function (error) { });
-        res.send("OK");
-        */
-        var blobService = azure.createBlobService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
-        console.log(blobService);
-        blobService.createBlockBlobFromLocalFile(containerName, files.fileUploaded.name,
-            thumbfil, function (error) {
+
+//spara stora filen i blob (kan vi göra efter resize lyckats)
+        console.log('nu ska vi spara orginalfilen i BLOB');
+        blobService.createBlockBlobFromLocalFile(containerName, files.fileUploaded.name, files.fileUploaded.path, function (error) {
+            if (error) throw error;
+            urlOrginal = "urlOrginal";
+            saveRow();
+            fs.unlink(files.fileUploaded.path, function (err) {
+                if (err) throw err;
+                console.log('successfully deleted ' + files.fileUploaded.path);
+            });
+        });
+
+//save thumbnail och spara i blob.
+        console.log('nu ska vi spara thumbnail på DISK');
+        orginalJPG.save(thumbfil, function (err) {
+            if (err) throw err;//senare kanske bara avbryta här men låta webbservern leva vidare
+            console.log('nu ska vi spara thumbnail i BLOB');
+            blobService.createBlockBlobFromLocalFile(containerName, "t_" + files.fileUploaded.name, thumbfil, function (error) {
                 if (error) throw error;
-                /*
+                urlThumbnail = "urlThumbnail";
+                saveRow();
                 fs.unlink(thumbfil, function (err) {
                     if (err) throw err;
                     console.log('successfully deleted ' + thumbfil);
                 });
-                */
             });
+        });//orginalJPG.save
 
-        res.end();
-        console.log("end of function");
-    });
+    });//form.parse
 
-});
-//Formidable changes the name of the uploaded file
-//Rename the file to its original name
-/*
-fs.rename(files.fileUploaded.path, files.fileUploaded.name, function(err) {
-    if (err)
-        throw err;
-    console.log('renamed complete');  
-});
-*/
-/*
-app.post('/upload', function (req, res) {
-    var blobService = azure.createBlobService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
-    var form = new multiparty.Form();
+});//app.post('/upload'
 
-    form.on('part', function(part) {
-        if (part.filename) {
-
-            var size = part.byteCount - part.byteOffset;
-            var name = part.filename;
-
-            blobService.createBlockBlobFromStream(containerName, name, part, size, function (error) {
-                if (error) {
-                    res.send(error);
-                } else {
-                    //res.send('inget gick fel när blob skapades! nu lista innehåll');
-                    blobService.listBlobsSegmented(containerName, null, function (error, result, response) {
-                        if (!error) {
-                            var url = blobService.getUrl(containerName, name, null, hostName);
-                            res.send(url);
-                            //res.send(JSON.stringify(result));
-                            //res.send('inget gick fel när blob listades2!');
-                            //console.log(JSON.stringify(result));
-                            //console.log(result);
-                        }
-                        else {
-                            res.send(error);
-                        }
-                    });
-                }
-            });
-        } else {//annat formulärselement än fil, vad gör handlePart?
-            form.handlePart(part);
-        }
-    });
-    form.parse(req);//aha, efter detta så kan eventen fyras av.
-    //res.send('OK');
-});
-*/
-/* från länken högst upp, dvs frågan i overflow där svaret är /upload ovan.
-app.post('/upload', function (req, res) {
-    var path = req.files.snapshot.path;
-    var bs= azure.createBlobService();
-    bs.createBlockBlobFromFile('c', 'test.png', path, function (error) { });
-    res.send("OK");
-});
-*/
 app.listen(process.env.PORT || 1337);
-
-
-/*
-
-var tufu = require("tufu");
-var orginalJPG = tufu("c:\\tmp\\dorr1.jpg");
-
-orginalJPG.resize(100, 100);
-orginalJPG.save("c:\\tmp\\dorr1_liten.jpg");
-*/
