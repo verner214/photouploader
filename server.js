@@ -81,7 +81,7 @@ app.post('/upload', function (req, res, next) {
     form.parse(req, function(err, fields, files) {
         res.writeHead(200, {'content-type': 'text/plain'});
         res.write('received upload:\n\n');
-        res.end();
+//        res.end();
 
 //debug
         console.log("form.bytesReceived");
@@ -113,6 +113,7 @@ app.post('/upload', function (req, res, next) {
         var thumbfil = thumbPrefix + files.fileUploaded.path;
 
 //spara stora filen i blob (kan vi göra efter resize lyckats)
+        res.write('nu ska vi spara orginalfilen i BLOB.\n\n');
         console.log('nu ska vi spara orginalfilen i BLOB');
         blobService.createBlockBlobFromLocalFile(containerName, files.fileUploaded.name, files.fileUploaded.path, function (error) {
             if (error) throw error;
@@ -125,6 +126,7 @@ app.post('/upload', function (req, res, next) {
         });
 
 //save thumbnail och spara i blob.
+        res.write('nu ska vi spara thumbnail på DISK.\n\n');
         console.log('nu ska vi spara thumbnail på DISK');
         orginalJPG.save(thumbfil, function (err) {
             if (err) throw err;//senare kanske bara avbryta här men låta webbservern leva vidare
@@ -139,7 +141,7 @@ app.post('/upload', function (req, res, next) {
                 });
             });
         });//orginalJPG.save
-
+        res.end();
     });//form.parse
 
 });//app.post('/upload'
