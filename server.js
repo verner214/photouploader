@@ -44,6 +44,16 @@ var fixedTufuSave = function (desPath, callback) {
     return this;
 };
 
+var convertObjectForAzure = function (azureTableEntity) {
+    var obj = {};
+    for (var propertyName in azureTableEntity) {
+        if (["PartitionKey", "RowKey"].indexOf(propertyName) == -1) {
+            obj[propertyName] = azureTableEntity[propertyName]["_"];
+        }
+    }
+    return obj;
+}
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
@@ -62,8 +72,10 @@ if (!fs.existsSync(thumbDir)) {
 
 app.get('/', function (req, res) {
     res.send(
-    '<a href="/upload">ladda upp med bilder</a></br>' +
-    '<a href="/show">visa alla blobbar</a></br>'
+    '<a href="/upload">ladda upp bilder, helst jpg</a></br>' +
+    '<a href="/show">visa JSON</a></br>' +
+    '<a href="/show2">visa alla blobbar</a></br>' +
+    'slut.</br>'
     );
 });
 
@@ -79,8 +91,27 @@ app.get('/show', function (req, res) {
             return;
         }
         res.writeHead(200, { 'content-type': 'text/plain' });
-        res.write(JSON.stringify(result));
+        res.write(JSON.stringify(convertObjectForAzure(result)));
         res.end();
+    });
+});
+
+//res.write kan anropas föera ggr, res.send en gång (gör res.end implicit antagligen)
+app.get('/show2', function (req, res) {
+    var query = new azure.TableQuery()
+      .top(5)
+      .where('PartitionKey eq ?', partitionKey);
+
+    var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+    tableSvc.queryEntities(tableName, query, null, function (error, result, response) {
+        if (error) {
+            res.writeHead(200, { 'content-type': 'text/plain' });
+            res.end(JSON.stringify(error));
+            return;
+        }
+        res.writeHead(200, { 'content-type': 'text/plain' });
+
+        res.send(mybody);
     });
 });
 
@@ -196,3 +227,32 @@ app.post('/upload', function (req, res, next) {
 });//app.post('/upload'
 
 app.listen(process.env.PORT || 1337);
+/*, från http://www.devtxt.com/blog/azure-table-storage-library-for-nodejs-frustrations
+//funktionen förbereder ett object att läggas in i table storage. allt blir string.
+function applyAzureProperties(obj) {
+  var entGen = azure.TableUtilities.entityGenerator;
+  var azureObj = {
+    PartitionKey: entGen.String("someEntity"),
+    RowKey: entGen.String(obj.id)//someID that you consider the primary key in the table.
+  };
+  //iterate all properties on the object, and
+  //create on the Azure entity, with its value as String type.
+  for (var propertyName in obj) {        
+    azureObj[propertyName] = entGen.String(obj[propertyName]);        
+  }
+  return azureObj;
+}
+
+//och tvärtom tar bort azurespecifik data vid hämtning
+function convertObjectForAzure(azureTableEntity) 
+{
+  var obj = {};
+  for (var propertyName in azureTableEntity) {
+    if(["PartitionKey","RowKey"].indexOf(propertyName)==-1){
+       obj[propertyName] = azureTableEntity[propertyName]["_"];
+    }
+  }
+  return obj;
+}
+
+*/
