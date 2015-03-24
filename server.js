@@ -44,16 +44,6 @@ var fixedTufuSave = function (desPath, callback) {
     return this;
 };
 
-var convertObjectForAzure = function (azureTableEntity) {
-    var obj = {};
-    for (var propertyName in azureTableEntity) {
-        if (["PartitionKey", "RowKey"].indexOf(propertyName) == -1) {
-            obj[propertyName] = azureTableEntity[propertyName]["_"];
-        }
-    }
-    return obj;
-}
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
@@ -91,7 +81,11 @@ app.get('/show', function (req, res) {
             return;
         }
         res.writeHead(200, { 'content-type': 'text/plain' });
-        res.write(JSON.stringify(convertObjectForAzure(result)));
+        var resultat = result.entries;
+        for (var r = 0; r < 5; r++) {
+            res.write(resultat[r].imgURL['_'] + '</br>');
+            res.write('</br>');
+        }
         res.end();
     });
 });
