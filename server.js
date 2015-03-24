@@ -6,7 +6,8 @@ set AZURE_STORAGE_ACCESS_KEY=blSI3p0IIYZJkojYyc27+5Jm82TmjaYbjEthG+f8fTT615DVeBJ
   
 obs! bra länk som är rätt och inte fel!, http://azure.microsoft.com/sv-se/develop/nodejs/
 obs! om hur man laddar upp och skapar fil innan, http://stackoverflow.com/questions/18317904/stream-uploaded-file-to-azure-blob-storage-with-node
-  */
+också en länk som har rätt information, http://azure.microsoft.com/sv-se/documentation/articles/storage-nodejs-how-to-use-table-storage/
+*/
 var express = require("express");
 var azure = require("azure-storage");
 var bodyParser = require('body-parser'); //connects bodyParsing middleware
@@ -14,6 +15,7 @@ var formidable = require('formidable');
 var path = require('path');     //used for file path
 var fs = require('fs-extra');    //File System-needed for renaming file etc
 var tufu = require("tufu");//gör thumbnails
+var uuid = require('node-uuid');
 
 var app = express();
 var containerName = "photos";
@@ -110,8 +112,8 @@ app.post('/upload', function (req, res, next) {
 
                 var entGen = azure.TableUtilities.entityGenerator;
                 var task = {
-                    PartitionKey: entGen.String('hometasks'),
-                    RowKey: entGen.String((rowid++).toString()),
+                    PartitionKey: entGen.String('photos'),//obligatorisk
+                    RowKey: entGen.String(uuid()),//obligatorisk
                     description: entGen.String('take out the trash'),
                     dueDate: entGen.DateTime(new Date(Date.UTC(2015, 6, 20))),
                 };
