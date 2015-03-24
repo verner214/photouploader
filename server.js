@@ -84,12 +84,13 @@ app.get('/show', function (req, res) {
         var resultat = result.entries;
         //res.write(JSON.stringify(resultat[0]["imgURL"]["_"]) + '\n\n');
         var bodyhtml = "";
-        bodyhtml += '<img src="' + resultat[0]["thumbURL"]["_"] + '">';
-        /*
+        //bodyhtml += '<img src="' + resultat[0]["thumbURL"]["_"] + '">';
+        
         for (var r = 0; r < 5; r++) {
-            bodyhtml += '<img src="' + resultat[r]["thumbURL"]["_"] + '">';
+            if (resultat[r]["thumbURL"])
+                bodyhtml += '<img src="' + resultat[r]["thumbURL"]["_"] + '">';
         }
-        */
+        
         res.send(bodyhtml);
         //res.end();
     });
