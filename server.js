@@ -23,7 +23,7 @@ var tableName = "photos";
 var AZURE_STORAGE_ACCOUNT = "portalvhdsgfh152bhy290k";
 var AZURE_STORAGE_ACCESS_KEY = "blSI3p0IIYZJkojYyc27+5Jm82TmjaYbjEthG+f8fTT615DVeBJ2MMc3gNPyW5dSRaPpeWa2cJ/NE7ypqWTvkw==";
 var hostName = "https://" + AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net";
-var rowid = 0;
+var partitionKey = "photos";
 
 var fixedTufuSave = function (desPath, callback) {
     var encodeData = this.codec.encode(this.imageData, this.quality);
@@ -62,9 +62,25 @@ if (!fs.existsSync(thumbDir)) {
 
 app.get('/', function (req, res) {
     res.send(
-    '<a href="/upload">ladda upp med stream</a></br>' +
-    '<a href="/show">visa alla blobar</a></br>'
+    '<a href="/upload">ladda upp med bilder</a></br>' +
+    '<a href="/show">visa alla blobbar</a></br>'
     );
+});
+
+app.get('/show', function (req, res) {
+    var query = new azure.TableQuery()
+      .top(5)
+      .where('PartitionKey eq ?', partitionKey);
+
+    tableSvc.queryEntities(tableName, query, null, function (error, result, response) {
+        if (error) {
+            res.end(JSON.stringify(error));
+            return;
+        }
+        res.writeHead(200, { 'content-type': 'text/plain' });
+        res.write(JSON.stringify(result));
+        res.end();
+    });
 });
 
 app.get('/upload', function (req, res) {
@@ -112,7 +128,7 @@ app.post('/upload', function (req, res, next) {
 
                 var entGen = azure.TableUtilities.entityGenerator;
                 var task = {
-                    PartitionKey: entGen.String('photos'),//obligatorisk
+                    PartitionKey: entGen.String(partitionKey),//obligatorisk
                     RowKey: entGen.String(uuid()),//obligatorisk
                     description: entGen.String('take out the trash'),
                     imgURL: entGen.String(urlOrginal),
