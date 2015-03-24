@@ -71,7 +71,7 @@ app.get('/', function (req, res) {
 
 app.get('/show', function (req, res) {
     var query = new azure.TableQuery()
-      .top(5)
+//      .top(5)
       .where('PartitionKey eq ?', partitionKey);
 
     var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
@@ -86,7 +86,7 @@ app.get('/show', function (req, res) {
         var bodyhtml = "";
         //bodyhtml += '<img src="' + resultat[0]["thumbURL"]["_"] + '">';
         
-        for (var r = 0; r < 5; r++) {
+        for (var r = 0; r < resultat.length; r++) {
             if (resultat[r] && resultat[r]["thumbURL"])
                 bodyhtml += '<img src="' + resultat[r]["thumbURL"]["_"] + '"/>';
         }
