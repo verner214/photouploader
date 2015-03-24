@@ -115,7 +115,8 @@ app.post('/upload', function (req, res, next) {
                     PartitionKey: entGen.String('photos'),//obligatorisk
                     RowKey: entGen.String(uuid()),//obligatorisk
                     description: entGen.String('take out the trash'),
-                    dueDate: entGen.DateTime(new Date(Date.UTC(2015, 6, 20))),
+                    imgURL: entGen.String(urlOrginal),
+                    thumbURL: entGen.String(urlThumbnail),
                 };
 
                 tableSvc.insertEntity(tableName, task, function (error, result, response) {
