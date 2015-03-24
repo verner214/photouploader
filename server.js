@@ -219,7 +219,10 @@ app.post('/upload', function (req, res, next) {
                 });
             });
         });//orginalJPG.save
-        res.end('<a href="/upload">ladda upp bilder, helst jpg</a></br>');
+        res.send(
+            '<a href="/upload">ladda upp bilder, helst jpg</a></br>' +
+            '<a href="/show">visa JSON</a></br>'
+        );
     });//form.parse
 
 });//app.post('/upload'
