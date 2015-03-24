@@ -82,7 +82,8 @@ app.get('/show', function (req, res) {
         }
         res.writeHead(200, { 'content-type': 'text/plain' });
         var resultat = result.entries;
-        res.write(JSON.stringify(resultat[0]["imgURL"]["_"]) + '\n\n');
+//        res.write(JSON.stringify(resultat[0]["imgURL"]["_"]) + '\n\n');
+        res.write('<img src=' + resultat[0]["imgURL"]["_"] + '>');
         /*
         for (var r = 0; r < 5; r++) {
             res.write(resultat[r].imgURL['_'] + '</br>');
@@ -205,7 +206,7 @@ app.post('/upload', function (req, res, next) {
             blobService.createBlockBlobFromLocalFile(containerName, "t_" + files.fileUploaded.name, thumbfil,
                 function (error) {
                 if (error) throw error;
-                urlThumbnail = "urlThumbnail";
+                urlThumbnail = blobService.getUrl(containerName, "t_" + files.fileUploaded.name, null, hostName);;
                 if (urlOrginal) {
                     saveRow(function (err) {
                         if (err) throw err;
