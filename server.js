@@ -110,6 +110,7 @@ app.get('/show2', function (req, res) {
         }
         res.writeHead(200, { 'content-type': 'text/plain' });
         res.write(JSON.stringify(result));
+        res.end();
     });
 });
 
