@@ -87,8 +87,8 @@ app.get('/show', function (req, res) {
         //bodyhtml += '<img src="' + resultat[0]["thumbURL"]["_"] + '">';
         
         for (var r = 0; r < 5; r++) {
-            if (resultat[r]["thumbURL"])
-                bodyhtml += '<img src="' + resultat[r]["thumbURL"]["_"] + '">';
+            if (resultat[r] && resultat[r]["thumbURL"])
+                bodyhtml += '<img src="' + resultat[r]["thumbURL"]["_"] + '"/>';
         }
         
         res.send(bodyhtml);
