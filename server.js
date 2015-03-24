@@ -82,10 +82,13 @@ app.get('/show', function (req, res) {
         }
         res.writeHead(200, { 'content-type': 'text/plain' });
         var resultat = result.entries;
+        res.write(JSON.stringify(resultat[0]) + '\n\n');
+        /*
         for (var r = 0; r < 5; r++) {
             res.write(resultat[r].imgURL['_'] + '</br>');
             res.write('</br>');
         }
+        */
         res.end();
     });
 });
