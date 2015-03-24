@@ -72,6 +72,7 @@ app.get('/show', function (req, res) {
       .top(5)
       .where('PartitionKey eq ?', partitionKey);
 
+    var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
     tableSvc.queryEntities(tableName, query, null, function (error, result, response) {
         if (error) {
             res.end(JSON.stringify(error));
