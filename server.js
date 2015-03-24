@@ -83,7 +83,7 @@ app.get('/show', function (req, res) {
         //res.writeHead(200, { 'content-type': 'text/plain' });
         var resultat = result.entries;
         //res.write(JSON.stringify(resultat[0]["imgURL"]["_"]) + '\n\n');
-        var bodyhtml = "";
+        var bodyhtml = '<a href="/upload">ladda upp bilder, helst jpg</a></br>';
         //bodyhtml += '<img src="' + resultat[0]["thumbURL"]["_"] + '">';
         
         for (var r = 0; r < resultat.length; r++) {
@@ -131,8 +131,7 @@ app.post('/upload', function (req, res, next) {
     form.keepExtensions = true;     //keep file extension
 
     form.parse(req, function(err, fields, files) {
-        res.writeHead(200, {'content-type': 'text/plain'});
-        res.write('received upload:' + files.fileUploaded.name + '\n\n');
+//        res.writeHead(200, { 'content-type': 'text/plain' });
 
 //debug
         console.log("form.bytesReceived");
@@ -220,7 +219,7 @@ app.post('/upload', function (req, res, next) {
                 });
             });
         });//orginalJPG.save
-        res.end();
+        res.end('<a href="/upload">ladda upp bilder, helst jpg</a></br>');
     });//form.parse
 
 });//app.post('/upload'
