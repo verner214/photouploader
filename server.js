@@ -99,7 +99,6 @@ app.get('/show', function (req, res) {
 //res.write kan anropas föera ggr, res.send en gång (gör res.end implicit antagligen)
 app.get('/show2', function (req, res) {
     var query = new azure.TableQuery()
-      .top(5)
       .where('PartitionKey eq ?', partitionKey);
 
     var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
@@ -110,8 +109,7 @@ app.get('/show2', function (req, res) {
             return;
         }
         res.writeHead(200, { 'content-type': 'text/plain' });
-
-        res.send(mybody);
+        res.send(JSON.stringify(result));
     });
 });
 
