@@ -28,12 +28,21 @@ var partitionKey = "photos";
 var fixedTufuSave = function (desPath, callback) {
     var encodeData = this.codec.encode(this.imageData, this.quality);
     fs.open(desPath ? desPath : this.src, 'w+', function (err, fd) {
-        if (err) callback(err);
+        if (err) {
+            callback(err);
+            return;
+        }
         console.log("dd" + encodeData.data.length);
         fs.write(fd, encodeData.data, 0, encodeData.data.length, 0, function (err) {
-            if (err) callback(err);
+            if (err) {
+                callback(err);
+                return;
+            }
             fs.close(fd, function (err) {
-                if (err) callback(err);
+                if (err) {
+                    callback(err);
+                    return;
+                }
                 console.log("fil sparad och stängd");
                 //reset quality
                 this.quality = 100;
@@ -144,17 +153,27 @@ app.post('/upload', function (req, res, next) {
 //URL'er
         var urlOrginal = null;
         var urlThumbnail = null;
+        var tableWritten = false;
 
 //initiera blobanvändning
         var blobService = azure.createBlobService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
         //console.log(blobService);
 
 //spara URL'er och metainfo i tabell
-        var saveRow = function(callback) {
+        var saveRow = function (callback) {
+            if (tableWritten) {
+                console.log('det hände verkligen');
+                callback(null);
+                return;
+            }
+            tableWritten = true;
             console.log('nu ska vi spara i tabell');
             var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
             tableSvc.createTableIfNotExists(tableName, function (error, result, response) {
-                if (error) callback(error);
+                if (error) {
+                    callback(error);
+                    return;
+                }
 
                 var entGen = azure.TableUtilities.entityGenerator;
                 var task = {
@@ -166,7 +185,7 @@ app.post('/upload', function (req, res, next) {
                 };
 
                 tableSvc.insertEntity(tableName, task, function (error, result, response) {
-                    callback(error);
+                    callback(error);//anropa alltid oavsett fel eller ej
                 });
             });
         }
@@ -188,7 +207,7 @@ app.post('/upload', function (req, res, next) {
                 if (urlThumbnail) {
                     saveRow(function (err) {
                         if (err) throw err;
-                        console.log('rad sparad i tabell');
+                        console.log('rad sparad i tabell1');
                     });
                 }
                 fs.unlink(files.fileUploaded.path, function (err) {
@@ -210,7 +229,7 @@ app.post('/upload', function (req, res, next) {
                 if (urlOrginal) {
                     saveRow(function (err) {
                         if (err) throw err;
-                        console.log('rad sparad i tabell');
+                        console.log('rad sparad i tabell2');
                     });
                 }
                 fs.unlink(thumbfil, function (err) {
