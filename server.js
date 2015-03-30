@@ -53,12 +53,14 @@ var fixedTufuSave = function (desPath, callback) {
     return this;
 };
 
+//så här ska det se ut numer. det bortkommenterade är gammalt.
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 //app.use(bodyParser({ defer: true }));
 
+//lägg uppladdade filer i speciella mappar, som skapas här.
 var uploadDir = "upload";
 var thumbPrefix = "t_";
 var thumbDir = thumbPrefix + uploadDir;
@@ -68,6 +70,9 @@ if (!fs.existsSync(uploadDir)) {
 if (!fs.existsSync(thumbDir)) {
     fs.mkdirSync(thumbDir);
 }
+
+//statiska html-filer ligger i public/
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function (req, res) {
     res.send(
