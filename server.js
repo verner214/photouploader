@@ -74,7 +74,9 @@ if (!fs.existsSync(thumbDir)) {
 //statiska html-filer ligger i public/
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function (req, res) {
+console.log("public=" + path.join(__dirname, 'public'));
+
+app.get('/start', function (req, res) {
     res.send(
     '<a href="/upload">ladda upp bilder, helst jpg</a></br>' +
     '<a href="/show">visa JSON</a></br>' +
