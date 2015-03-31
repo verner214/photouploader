@@ -18,17 +18,17 @@
             $.support.cors = true;
             var RowKey = getParameterByName("RowKey");//079d9bce-8542-42ee-bb55-644eeed26e78
             var PartitionKey = getParameterByName("PartitionKey");//photos
-            alert(RowKey + ":" + PartitionKey);
+            //alert(RowKey + ":" + PartitionKey);
             $.ajax({//tableSAS:st=2015-03-29T18%3A35%3A25Z&se=2015-04-05T18%3A55%3A25Z&sp=r&sv=2014-02-14&tn=photos&sig=7t9DkALrw9QLsG4B%2BPUFodyDJHFCpvbwZsEfYoSuHpI%3D
                 url: "https://portalvhdsgfh152bhy290k.table.core.windows.net/photos(PartitionKey='" + PartitionKey + "',RowKey='" + RowKey + "')?" +
                     "st=2015-03-29T18%3A35%3A25Z&se=2015-04-05T18%3A55%3A25Z&sp=r&sv=2014-02-14&tn=photos&sig=7t9DkALrw9QLsG4B%2BPUFodyDJHFCpvbwZsEfYoSuHpI%3D",
                 type: 'GET',
                 success: function (data) {
-                    alert(JSON.stringify(data));
+                    //alert(JSON.stringify(data));
                     document.getElementById('formRowKey').value = RowKey;
                     document.getElementById('formPartitionKey').value = PartitionKey;
                     if (data.description) {
-                        alert(data.description);
+                        //alert(data.description);
                         document.getElementById('formDescription').value = data.description;
                     }
                     if (data.sortorder) {
