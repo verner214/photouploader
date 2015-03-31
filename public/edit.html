@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script src="jquery-1.11.2.js"></script>
+    <script type="text/javascript">
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+        var fetchPhoto = function () {
+            $.support.cors = true;
+            var RowKey = getParameterByName("RowKey");//079d9bce-8542-42ee-bb55-644eeed26e78
+            var PartitionKey = getParameterByName("PartitionKey");//photos
+            alert(RowKey + ":" + PartitionKey);
+            $.ajax({//tableSAS:st=2015-03-29T18%3A35%3A25Z&se=2015-04-05T18%3A55%3A25Z&sp=r&sv=2014-02-14&tn=photos&sig=7t9DkALrw9QLsG4B%2BPUFodyDJHFCpvbwZsEfYoSuHpI%3D
+                url: "https://portalvhdsgfh152bhy290k.table.core.windows.net/photos(PartitionKey='" + PartitionKey + "',RowKey='" + RowKey + "')?" +
+                    "st=2015-03-29T18%3A35%3A25Z&se=2015-04-05T18%3A55%3A25Z&sp=r&sv=2014-02-14&tn=photos&sig=7t9DkALrw9QLsG4B%2BPUFodyDJHFCpvbwZsEfYoSuHpI%3D",
+                type: 'GET',
+                success: function (data) {
+                    alert(JSON.stringify(data));
+                    document.getElementById('formRowKey').value = RowKey;
+                    document.getElementById('formPartitionKey').value = PartitionKey;
+                    if (data.description) {
+                        alert(data.description);
+                        document.getElementById('formDescription').value = data.description;
+                    }
+                    if (data.sortorder) {
+                        document.getElementById('formSortOrder').value = data.sortorder;
+                    }
+                    if (data.imgURL) {
+                        document.getElementById('targetIMG').src = data.imgURL;
+                    }
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Accept', 'application/json;odata=nometadata');
+                },
+                error: function (rcvData) {
+                    console.log(rcvData);
+                }
+            });
+        };
+        $(document).ready(function () {
+            fetchPhoto();
+        });
+    </script>
+    <div>
+        <img id="targetIMG" style="width:512px;" />
+        <form action="/update" method="post" enctype="multipart/form-data">
+            description<input id="formDescription" type="text" name="description" value="value of description" /><br />
+            sortorder<input id="formSortOrder" type="text" name="sortorder" value="name=sortorder" /><br />
+            hidden<input id="formHidden" type="checkbox" name="hidden" value="name=hidden" /><br />
+            <input id="formRowKey" type="hidden" name="rowkey" />
+            <input id="formPartitionKey" type="hidden" name="partitionkey" />
+            <input type="submit" value="Update" />
+        </form>
+    </div>
+</body>
+</html>

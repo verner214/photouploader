@@ -139,6 +139,12 @@ app.get('/upload', function (req, res) {
     );
 });
 
+app.post('/update', function (req, res, next) {
+    var fullUrl = req.protocol + '://' + req.get('host');
+    console.log("url=" + fullUrl);
+    res.redirect(fullUrl + "/ajax2.html");
+});
+
 app.post('/upload', function (req, res, next) {
 
     var form = new formidable.IncomingForm();
