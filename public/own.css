@@ -1,7 +1,7 @@
 li {list-style-type: none;}
 ul img { width: 100px;}
 
-@media (max-width: 800px) {
+@media only screen and (max-device-width: 480px) {
     ul img {
         width: 200px;
     }
