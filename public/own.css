@@ -1,0 +1,8 @@
+li {list-style-type: none;}
+ul img { width: 100px;}
+
+@media (max-width: 800px) {
+    ul img {
+        width: 200px;
+    }
+}
