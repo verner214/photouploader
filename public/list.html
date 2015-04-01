@@ -37,6 +37,7 @@
 
 //radera efter 10 klick!
             if (delCntNr.innerHTML === "10") {
+                delCntNr.innerHTML = "";
                 var rowkey = document.getElementById("formRowKey");
                 rowkey.value = myGlobalObject.JSONFromServer.value[index].RowKey;
                 var partitionkey = document.getElementById("formPartitionKey");
