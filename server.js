@@ -128,7 +128,7 @@ app.post('/delete', function (req, res, next) {
         var task = {
             PartitionKey: entGen.String(fields.partitionkey),//obligatorisk
             RowKey: entGen.String(fields.rowkey)//obligatorisk
-        };
+        };//obs! måste ta bort blob me.
         tableSvc.deleteEntity(tableName, task, function (error, result, response) {
             if (err) throw err;
             var fullUrl = req.protocol + '://' + req.get('host');
