@@ -250,6 +250,8 @@ app.post('/upload', function (req, res, next) {
 });//app.post('/upload'
 
 app.get('/sas', function (req, res) {
+	res.send("<p>hej</p>");
+	/*
 	var startDate = new Date();
 	var expiryDate = new Date(startDate);
 	expiryDate.setMinutes(startDate.getMinutes() + 10000);
