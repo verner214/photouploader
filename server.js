@@ -262,11 +262,10 @@ app.get('/sas', function (req, res) {
 			Expiry: expiryDate
 		},
 	};
+//	res.send("<p>hej</p>");
+	var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
 	res.send("<p>hej3</p>");
 	/*
-	res.send("<p>hej</p>");
-	/*
-	var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
 	var tableSAS = tableSvc.generateSharedAccessSignature(table, sharedAccessPolicy);
 	var html = "<b>SAS</b>" + tableSAS + "<br>" + "<b>host</b>" + tableSAS.host + "<br>";
 	res.send(html);
