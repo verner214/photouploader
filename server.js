@@ -2,7 +2,7 @@
   webbserver som tillåter uppladdning av filer till azure storage
   dessa environment variabler måste sättas innan servern startas:
 set AZURE_STORAGE_ACCOUNT=portalvhdsgfh152bhy290k
-set AZURE_STORAGE_ACCESS_KEY=blSI3p0IIYZJkojYyc27+5Jm82TmjaYbjEthG+f8fTT615DVeBJ2MMc3gNPyW5dSRaPpeWa2cJ/NE7ypqWTvkw==
+set AZURE_STORAGE_ACCESS_KEY=[key from azure]
   
 obs! bra länk som är rätt och inte fel!, http://azure.microsoft.com/sv-se/develop/nodejs/
 obs! om hur man laddar upp och skapar fil innan, http://stackoverflow.com/questions/18317904/stream-uploaded-file-to-azure-blob-storage-with-node
@@ -21,7 +21,7 @@ var app = express();
 var containerName = "photos";
 var tableName = "photos";
 var AZURE_STORAGE_ACCOUNT = "portalvhdsgfh152bhy290k";
-var AZURE_STORAGE_ACCESS_KEY = "blSI3p0IIYZJkojYyc27+5Jm82TmjaYbjEthG+f8fTT615DVeBJ2MMc3gNPyW5dSRaPpeWa2cJ/NE7ypqWTvkw==";
+var AZURE_STORAGE_ACCESS_KEY = process.env.AZURE_STORAGE_ACCESS_KEY;
 var hostName = "https://" + AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net";
 var partitionKey = "photos";
 

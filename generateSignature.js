@@ -32,24 +32,25 @@ var signatureString = “r” + "\n"
 
 https://portalvhdsgfh152bhy290k.table.core.windows.net/photos?$filter=PartitionKey%20eq%20'photos'&sv=2014-02-14&tn=photos&se=2030-02-01&sp=r&sig=jDrr6cna7JPwIaxWfdH0tT5v9dc%3d
 */
+//OBS!! fick inte detta att fungera, antagligen något fel på stringToSign. använder API för att generara signatur istället. se längre ned.
+// sign
 var account = "portalvhdsgfh152bhy290k";
 
 var table = "photos";
 var AZURE_STORAGE_ACCOUNT = "portalvhdsgfh152bhy290k";
-var AZURE_STORAGE_ACCESS_KEY = "blSI3p0IIYZJkojYyc27+5Jm82TmjaYbjEthG+f8fTT615DVeBJ2MMc3gNPyW5dSRaPpeWa2cJ/NE7ypqWTvkw==";
+var AZURE_STORAGE_ACCESS_KEY = process.env.AZURE_STORAGE_ACCESS_KEY;
 var hostName = "https://" + AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net";
 
 var CryptoJS = require("crypto-js");
 var stringToSign = "r\n\n2030-12-01\n/portalvhdsgfh152bhy290k/photos\n\n2014-02-14\n\n\n\n\n";
-var secretKey = "blSI3p0IIYZJkojYyc27+5Jm82TmjaYbjEthG+f8fTT615DVeBJ2MMc3gNPyW5dSRaPpeWa2cJ/NE7ypqWTvkw==";
-var signature = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(CryptoJS.enc.Utf8.parse(stringToSign), CryptoJS.enc.Base64.parse(secretKey)));
+var signature = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(CryptoJS.enc.Utf8.parse(stringToSign), CryptoJS.enc.Base64.parse(AZURE_STORAGE_ACCESS_KEY)));
 console.log(signature);
 
-//och nu genererad signature istället
+//och nu genererad signature istället, host nedan klistras in efter URI delen i en URL där man anropar storage direkt, nämligen list.html och edit.html
 var azure = require("azure-storage");
 var startDate = new Date();
 var expiryDate = new Date(startDate);
-expiryDate.setMinutes(startDate.getMinutes() + 10000);
+expiryDate.setMinutes(startDate.getMinutes() + 1000000);
 startDate.setMinutes(startDate.getMinutes() - 100);
 
 var sharedAccessPolicy = {
