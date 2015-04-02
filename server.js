@@ -262,6 +262,8 @@ app.get('/sas', function (req, res) {
 			Expiry: expiryDate
 		},
 	};
+	res.send("<p>hej</p>");
+	/*
 	var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
 	var tableSAS = tableSvc.generateSharedAccessSignature(table, sharedAccessPolicy);
 	var html = "<b>SAS</b>" + tableSAS + "<br>" + "<b>host</b>" + tableSAS.host + "<br>";
@@ -270,6 +272,7 @@ app.get('/sas', function (req, res) {
 	//console.log("tableSAS:" + tableSAS);
 	//https://portalvhdsgfh152bhy290k.table.core.windows.net/photos?st=2015-03-28T20%3A41%3A10Z&se=2015-03-29T00%3A01%3A10Z&sp=r&sv=2014-02-14&tn=photos&sig=yf8MoYRO8kAO4NF89krvZDLjLycVgOBHA%2FC%2FCIc0vV0%3D
 	//console.log("host:" + host);
+	*/
 });
 
 app.get('/', function (req, res) {
