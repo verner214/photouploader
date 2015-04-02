@@ -25,7 +25,7 @@
                     "st=2015-04-02T09%3A13%3A00Z&se=2017-02-24T21%3A33%3A00Z&sp=r&sv=2014-02-14&tn=photos&sig=f8Eo%2FmE3SxQE1TstvG5memvKfmTxyMszMTOa27AQ0WQ%3D",
                 type: 'GET',
                 success: function (data) {
-					document.write('success:');
+					$("#ul_debug").append("<span>success</span><br>");
                     //alert(JSON.stringify(data));
                     document.getElementById('formRowKey').value = RowKey;
                     document.getElementById('formPartitionKey').value = PartitionKey;
@@ -37,12 +37,12 @@
                         document.getElementById('formSortOrder').value = data.sortorder;
                     }
                     if (data.imgURL) {
-						document.write('src:' + data.imgURL);
+						$("#ul_debug").append("<span>src:" + data.imgURL + "</span><br>");
                         document.getElementById('targetIMG').src = data.imgURL;
                     }
                 },
                 beforeSend: function (xhr) {
-					document.write('beforeSend:');
+					$("#ul_debug").append("<span>beforeSend</span><br>");
                     xhr.setRequestHeader('Accept', 'application/json;odata=nometadata');
                 },
                 error: function (rcvData) {
@@ -52,10 +52,14 @@
             });
         };
         $(document).ready(function () {
-			document.write('ready:');
+			$("#ul_debug").append("<span>ready</span><br>");
             fetchPhoto();
         });
     </script>
+	<div>
+		<ul id="ul_debug">
+		</ul>
+    </div>
     <div>
         <img id="targetIMG" style="width:512px;" />
         <form action="/update" method="post" enctype="multipart/form-data">
