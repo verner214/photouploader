@@ -264,9 +264,8 @@ app.get('/sas', function (req, res) {
 	};
 //	res.send("<p>hej</p>");
 	var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
-	res.send("<p>hej3</p>");
-	/*
-	var tableSAS = tableSvc.generateSharedAccessSignature(table, sharedAccessPolicy);
+//	res.send("<p>hej4</p>");
+	var tableSAS = tableSvc.generateSharedAccessSignature(tableName, sharedAccessPolicy);
 	var html = "<b>SAS</b>" + tableSAS + "<br>" + "<b>host</b>" + tableSAS.host + "<br>";
 	res.send(html);
 	//var host = tableSvc.host;
