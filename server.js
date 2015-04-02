@@ -255,8 +255,6 @@ app.get('/sas', function (req, res) {
 	expiryDate.setMinutes(startDate.getMinutes() + 10000);
 	startDate.setMinutes(startDate.getMinutes() - 100);
 
-	res.send("<p>hej2</p>");
-	/*
 	var sharedAccessPolicy = {
 		AccessPolicy: {
 			Permissions: azure.TableUtilities.SharedAccessPermissions.QUERY,
@@ -264,6 +262,8 @@ app.get('/sas', function (req, res) {
 			Expiry: expiryDate
 		},
 	};
+	res.send("<p>hej3</p>");
+	/*
 	res.send("<p>hej</p>");
 	/*
 	var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
