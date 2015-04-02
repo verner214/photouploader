@@ -249,10 +249,35 @@ app.post('/upload', function (req, res, next) {
 
 });//app.post('/upload'
 
+app.get('/sas', function (req, res) {
+	var startDate = new Date();
+	var expiryDate = new Date(startDate);
+	expiryDate.setMinutes(startDate.getMinutes() + 1000000);
+	startDate.setMinutes(startDate.getMinutes() - 100);
+
+	var sharedAccessPolicy = {
+		AccessPolicy: {
+			Permissions: azure.TableUtilities.SharedAccessPermissions.QUERY,
+			Start: startDate,
+			Expiry: expiryDate
+		},
+	};
+	var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+	var tableSAS = tableSvc.generateSharedAccessSignature(table, sharedAccessPolicy);
+	var html = "<b>SAS</b>" + tableSAS + "<br>" + "<b>host</b>" + tableSAS.host + "<br>";
+	res.send(html);
+	//var host = tableSvc.host;
+	//console.log("tableSAS:" + tableSAS);
+	//https://portalvhdsgfh152bhy290k.table.core.windows.net/photos?st=2015-03-28T20%3A41%3A10Z&se=2015-03-29T00%3A01%3A10Z&sp=r&sv=2014-02-14&tn=photos&sig=yf8MoYRO8kAO4NF89krvZDLjLycVgOBHA%2FC%2FCIc0vV0%3D
+	//console.log("host:" + host);
+});
+
 app.get('/', function (req, res) {
     var fullUrl = req.protocol + '://' + req.get('host');
     //console.log("url=" + fullUrl);
     res.redirect(fullUrl + "/list.html");
 });
+
+
 
 app.listen(process.env.PORT || 1337);
