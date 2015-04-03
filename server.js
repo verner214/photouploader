@@ -200,14 +200,15 @@ app.post('/upload', function (req, res, next) {
         orginalJPG.save = fixedTufuSave;//egen savemetod ersätter den befintliga
         orginalJPG.resize(100, 100);
         var thumbfil = thumbPrefix + files.fileUploaded.path;
+        //var thumbfil = thumbPrefix + files.fileUploaded.path;
 
 //spara stora filen i blob (kan vi göra efter resize lyckats)
         console.log('nu ska vi spara orginalfilen i BLOB');
-        blobService.createBlockBlobFromLocalFile(containerName, files.fileUploaded.name, files.fileUploaded.path,
+        blobService.createBlockBlobFromLocalFile(containerName, files.fileUploaded.path, files.fileUploaded.path,
             function (error, result, response) {
                 if (error) throw error;
                 console.log('result:' + result);
-                urlOrginal = blobService.getUrl(containerName, files.fileUploaded.name, null, hostName);
+                urlOrginal = blobService.getUrl(containerName, files.fileUploaded.path, null, hostName);
                 console.log('urlOrginal:' + urlOrginal);
                 if (urlThumbnail) {
                     saveRow(function (err) {
@@ -227,10 +228,10 @@ app.post('/upload', function (req, res, next) {
         orginalJPG.save(thumbfil, function (err) {
             if (err) throw err;//senare kanske bara avbryta här men låta webbservern leva vidare
             console.log('nu ska vi spara thumbnail i BLOB');
-            blobService.createBlockBlobFromLocalFile(containerName, "t_" + files.fileUploaded.name, thumbfil,
+            blobService.createBlockBlobFromLocalFile(containerName, thumbfil, thumbfil,
                 function (error) {
                 if (error) throw error;
-                urlThumbnail = blobService.getUrl(containerName, "t_" + files.fileUploaded.name, null, hostName);;
+                urlThumbnail = blobService.getUrl(containerName, thumbfil, null, hostName);;
                 if (urlOrginal) {
                     saveRow(function (err) {
                         if (err) throw err;
