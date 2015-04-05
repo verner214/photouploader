@@ -30,8 +30,6 @@ var cutAndResize = function(mytufu, newWidth, newHeight) {
 
     var widthRatio = width / newWidth;
     var heightRatio = height / newHeight;
-    console.log(width + ":" + height);
-    console.log(widthRatio + ":" + heightRatio);
 
     if (widthRatio > heightRatio) {//bilden för bred, sidorna ska bort
         var tmpWidth = newWidth * heightRatio;
@@ -49,11 +47,14 @@ var tufu = require("tufu");
 //IMG_0008.JPG
 //var orginalJPG = tufu("c:\\tmp\\dorr1.jpg");
 var orginalJPG = tufu("c:\\temp\\bilder\\br2.JPG");
-//IMG_0011.JPG
 cutAndResize(orginalJPG, 300, 400);
 orginalJPG.quality = 92;
 orginalJPG.save("c:\\temp\\bilder\\zzz.jpg");
 
+var orginalJPG = tufu("c:\\temp\\bilder\\br2.JPG");
+cutAndResize(orginalJPG, 100, 100);
+orginalJPG.quality = 92;
+orginalJPG.save("c:\\temp\\bilder\\zzz100.jpg");
 /*
 orginalJPG.resize(100, 100);
 orginalJPG.save("c:\\tmp\\dorr1_liten.jpg");
