@@ -75,6 +75,7 @@ if (!fs.existsSync(thumbDir)) {
 app.use(express.static(path.join(__dirname, 'public')));
 console.log("public=" + path.join(__dirname, 'public'));
 
+/*
 app.get('/start', function (req, res) {
     res.send(
     '<a href="/upload">ladda upp bilder, helst jpg</a></br>' +
@@ -92,6 +93,7 @@ app.get('/upload', function (req, res) {
     '</form>'
     );
 });
+*/
 //edit.html postar hit
 app.post('/update', function (req, res, next) {
     var form = new formidable.IncomingForm();
@@ -275,13 +277,13 @@ app.get('/sas', function (req, res) {
 	//console.log("host:" + host);
 	
 });
-
+/*
 app.get('/', function (req, res) {
     var fullUrl = req.protocol + '://' + req.get('host');
     //console.log("url=" + fullUrl);
     res.redirect(fullUrl + "/list.html");
 });
-
+*/
 
 
 app.listen(process.env.PORT || 1337);
