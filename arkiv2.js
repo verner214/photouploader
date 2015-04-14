@@ -44,6 +44,34 @@ app.use(bodyParser.urlencoded({
 }));
 //app.use(bodyParser({ defer: true }));
 
+/*
+app.get('/start', function (req, res) {
+    res.send(
+    '<a href="/upload">ladda upp bilder, helst jpg</a></br>' +
+    '<a href="/show">visa JSON</a></br>' +
+    '<a href="/show2">visa alla blobbar</a></br>' +
+    'slut.</br>'
+    );
+});
+
+app.get('/upload', function (req, res) {
+    res.send(
+    '<form action="/upload" method="post" enctype="multipart/form-data">' +
+    '<input type="file" name="fileUploaded" />' +
+    '<input type="submit" value="Upload" />' +
+    '</form>'
+    );
+});
+*/
+/*
+app.get('/', function (req, res) {
+    var fullUrl = req.protocol + '://' + req.get('host');
+    //console.log("url=" + fullUrl);
+    res.redirect(fullUrl + "/list.html");
+});
+*/
+
+
 var uploadDir = "upload";
 var thumbPrefix = "t_";
 var thumbDir = thumbPrefix + uploadDir;

@@ -42,8 +42,27 @@ var cutAndResize = function(mytufu, newWidth, newHeight) {
     mytufu.resize(newWidth, newHeight);
 }
 
-
 var tufu = require("tufu");
+
+tufu.prototype.cutAndResize = function (newWidth, newHeight) {
+    var width = this.imageData.width;
+    var height = this.imageData.height;
+
+    var widthRatio = width / newWidth;
+    var heightRatio = height / newHeight;
+
+    if (widthRatio > heightRatio) {//bilden för bred, sidorna ska bort
+        var tmpWidth = newWidth * heightRatio;
+        this.cut(Math.floor((width - tmpWidth) / 2), 0, tmpWidth, height);
+    }
+    else {
+        var tmpHeight = newHeight * widthRatio;
+        this.cut(0, Math.floor((height - tmpHeight) / 2), width, tmpHeight);
+    }
+    this.resize(newWidth, newHeight);
+}
+
+
 //IMG_0008.JPG
 //var orginalJPG = tufu("c:\\tmp\\dorr1.jpg");
 var orginalJPG = tufu("c:\\temp\\bilder\\br2.JPG");
@@ -52,7 +71,7 @@ orginalJPG.quality = 92;
 orginalJPG.save("c:\\temp\\bilder\\zzz.jpg");
 
 var orginalJPG = tufu("c:\\temp\\bilder\\br2.JPG");
-cutAndResize(orginalJPG, 100, 100);
+orginalJPG.cutAndResize(100, 100);
 orginalJPG.quality = 92;
 orginalJPG.save("c:\\temp\\bilder\\zzz100.jpg");
 /*

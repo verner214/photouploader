@@ -75,25 +75,6 @@ if (!fs.existsSync(thumbDir)) {
 app.use(express.static(path.join(__dirname, 'public')));
 console.log("public=" + path.join(__dirname, 'public'));
 
-/*
-app.get('/start', function (req, res) {
-    res.send(
-    '<a href="/upload">ladda upp bilder, helst jpg</a></br>' +
-    '<a href="/show">visa JSON</a></br>' +
-    '<a href="/show2">visa alla blobbar</a></br>' +
-    'slut.</br>'
-    );
-});
-
-app.get('/upload', function (req, res) {
-    res.send(
-    '<form action="/upload" method="post" enctype="multipart/form-data">' +
-    '<input type="file" name="fileUploaded" />' +
-    '<input type="submit" value="Upload" />' +
-    '</form>'
-    );
-});
-*/
 //edit.html postar hit
 app.post('/update', function (req, res, next) {
     var form = new formidable.IncomingForm();
@@ -130,7 +111,7 @@ app.post('/delete', function (req, res, next) {
         var task = {
             PartitionKey: entGen.String(fields.partitionkey),//obligatorisk
             RowKey: entGen.String(fields.rowkey)//obligatorisk
-        };//obs! måste ta bort blob me.
+        };//obs! måste ta bort tillhörande blobbar me.
         tableSvc.deleteEntity(tableName, task, function (error, result, response) {
             if (err) throw err;
             var fullUrl = req.protocol + '://' + req.get('host');
@@ -265,25 +246,11 @@ app.get('/sas', function (req, res) {
 			Expiry: expiryDate
 		},
 	};
-//	res.send("<p>hej</p>");
 	var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
-//	res.send("<p>hej4</p>");
 	var tableSAS = tableSvc.generateSharedAccessSignature(tableName, sharedAccessPolicy);
 	var html = "<b>SAS</b>" + tableSAS + "<br>" + "<b>host</b><br>" + JSON.stringify(tableSvc.host) + "<br>";
 	res.send(html);
-	//var host = tableSvc.host;
-	//console.log("tableSAS:" + tableSAS);
 	//https://portalvhdsgfh152bhy290k.table.core.windows.net/photos?st=2015-03-28T20%3A41%3A10Z&se=2015-03-29T00%3A01%3A10Z&sp=r&sv=2014-02-14&tn=photos&sig=yf8MoYRO8kAO4NF89krvZDLjLycVgOBHA%2FC%2FCIc0vV0%3D
-	//console.log("host:" + host);
-	
 });
-/*
-app.get('/', function (req, res) {
-    var fullUrl = req.protocol + '://' + req.get('host');
-    //console.log("url=" + fullUrl);
-    res.redirect(fullUrl + "/list.html");
-});
-*/
-
 
 app.listen(process.env.PORT || 1337);
