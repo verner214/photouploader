@@ -14,7 +14,7 @@ var bodyParser = require('body-parser'); //connects bodyParsing middleware
 var formidable = require('formidable');
 var path = require('path');     //used for file path
 var fs = require('fs-extra');    //File System-needed for renaming file etc
-var tufu = require("tufu");//gör thumbnails
+var tufu = require(".\tufuOwn");//gör thumbnails
 var uuid = require('node-uuid');
 
 var app = express();
@@ -24,34 +24,6 @@ var AZURE_STORAGE_ACCOUNT = "portalvhdsgfh152bhy290k";
 var AZURE_STORAGE_ACCESS_KEY = process.env.AZURE_STORAGE_ACCESS_KEY;
 var hostName = "https://" + AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net";
 var partitionKey = "photos";
-
-var fixedTufuSave = function (desPath, callback) {
-    var encodeData = this.codec.encode(this.imageData, this.quality);
-    fs.open(desPath ? desPath : this.src, 'w+', function (err, fd) {
-        if (err) {
-            callback(err);
-            return;
-        }
-        console.log("dd" + encodeData.data.length);
-        fs.write(fd, encodeData.data, 0, encodeData.data.length, 0, function (err) {
-            if (err) {
-                callback(err);
-                return;
-            }
-            fs.close(fd, function (err) {
-                if (err) {
-                    callback(err);
-                    return;
-                }
-                console.log("fil sparad och stängd");
-                //reset quality
-                this.quality = 100;
-                callback(null);
-            });
-        });
-    });
-    return this;
-};
 
 //så här ska det se ut numer. det bortkommenterade är gammalt.
 app.use(bodyParser.json());
@@ -75,7 +47,7 @@ if (!fs.existsSync(thumbDir)) {
 app.use(express.static(path.join(__dirname, 'public')));
 console.log("public=" + path.join(__dirname, 'public'));
 
-//edit.html postar hit
+//edit.html postar hit.
 app.post('/update', function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
@@ -96,8 +68,7 @@ app.post('/update', function (req, res, next) {
             console.log("url=" + fullUrl);
             res.redirect(fullUrl + "/list.html");
         });
-    });
-    
+    });    
 });//slut update
 
 app.post('/delete', function (req, res, next) {

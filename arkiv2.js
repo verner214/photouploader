@@ -21,6 +21,68 @@ var AZURE_STORAGE_ACCOUNT = "portalvhdsgfh152bhy290k";
 var AZURE_STORAGE_ACCESS_KEY = process.env.AZURE_STORAGE_ACCESS_KEY;
 var hostName = "https://" + AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net";
 
+var thumbnail100 = function () {
+    var width = orginalJPG.imageData.width;//sen, använd resize
+    var height = orginalJPG.imageData.height;
+
+    console.log(width + ":" + height);
+
+    var diff = width - height;
+
+    if (diff > 0) {//bredare än hög -> klipp på sidorna
+        orginalJPG.cut(Math.floor(diff / 2), 0, height, height);
+    }
+    else {
+        orginalJPG.cut(0, Math.floor(-diff / 2), width, width);
+    }
+
+    orginalJPG.resize(100, 100);
+
+    orginalJPG.quality = 92;
+    orginalJPG.save("c:\\temp\\bilder\\zzz.jpg");
+}
+//obs! gör funktion som anpassar bild till önskad bredd och höjd. 
+//1. klipper kanter så att bilden har rätt proportioner
+//2. skalar om.
+var cutAndResize = function (mytufu, newWidth, newHeight) {
+    var width = mytufu.imageData.width;
+    var height = mytufu.imageData.height;
+
+    var widthRatio = width / newWidth;
+    var heightRatio = height / newHeight;
+
+    if (widthRatio > heightRatio) {//bilden för bred, sidorna ska bort
+        var tmpWidth = newWidth * heightRatio;
+        mytufu.cut(Math.floor((width - tmpWidth) / 2), 0, tmpWidth, height);
+    }
+    else {
+        var tmpHeight = newHeight * widthRatio;
+        mytufu.cut(0, Math.floor((height - tmpHeight) / 2), width, tmpHeight);
+    }
+    mytufu.resize(newWidth, newHeight);
+}
+
+var tufu = require("tufu");
+
+tufu.prototype.cutAndResize = function (newWidth, newHeight) {
+    var width = this.imageData.width;
+    var height = this.imageData.height;
+
+    var widthRatio = width / newWidth;
+    var heightRatio = height / newHeight;
+
+    if (widthRatio > heightRatio) {//bilden för bred, sidorna ska bort
+        var tmpWidth = newWidth * heightRatio;
+        this.cut(Math.floor((width - tmpWidth) / 2), 0, tmpWidth, height);
+    }
+    else {
+        var tmpHeight = newHeight * widthRatio;
+        this.cut(0, Math.floor((height - tmpHeight) / 2), width, tmpHeight);
+    }
+    this.resize(newWidth, newHeight);
+}
+
+
 var fixedTufuSave = function (desPath) {
     var encodeData = this.codec.encode(this.imageData, this.quality);
     fs.open(desPath ? desPath : this.src, 'w+', function (err, fd) {
