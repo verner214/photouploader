@@ -16,6 +16,7 @@ var path = require('path');     //used for file path
 var fs = require('fs-extra');    //File System-needed for renaming file etc
 var tufu = require(".\tufuOwn");//gör thumbnails
 var uuid = require('node-uuid');
+var async = require("async");
 
 var app = express();
 var containerName = "photos";
