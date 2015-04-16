@@ -108,11 +108,6 @@ app.post('/upload', function (req, res, next) {
         console.log("file type: "+JSON.stringify(files.fileUploaded.type));
         console.log("lastModifiedDate: " + JSON.stringify(files.fileUploaded.lastModifiedDate));
 
-//URL'er
-        var urlOrginal = null;//TABORT
-        var urlThumbnail = null;//TABORT
-        var tableWritten = false;//TABORT
-
 //initiera blobanvändning
         var blobService = azure.createBlobService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
 
