@@ -21,6 +21,8 @@ var AZURE_STORAGE_ACCOUNT = "portalvhdsgfh152bhy290k";
 var AZURE_STORAGE_ACCESS_KEY = process.env.AZURE_STORAGE_ACCESS_KEY;
 var hostName = "https://" + AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net";
 
+//        res.writeHead(200, { 'content-type': 'text/plain' });
+
 var thumbnail100 = function () {
     var width = orginalJPG.imageData.width;//sen, använd resize
     var height = orginalJPG.imageData.height;
