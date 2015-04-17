@@ -36,8 +36,13 @@
                     if (data.sortorder) {
                         document.getElementById('formSortOrder').value = data.sortorder;
                     }
-                    if (data.imgURL) {
-						$("#ul_debug").append("<span>src:" + data.imgURL + "</span><br>");
+                    //visa mediumURL istället för imgURL i första hand
+                    if (data.mediumURL) {
+                        $("#ul_debug").append("<span>src:" + data.mediumURL + "</span><br>");
+                        document.getElementById('targetIMG').src = data.mediumURL;
+                    }
+                    else if (data.imgURL) {
+                        $("#ul_debug").append("<span>src:" + data.imgURL + "</span><br>");
                         document.getElementById('targetIMG').src = data.imgURL;
                     }
                 },
@@ -61,7 +66,7 @@
 		</ul>
     </div>
     <div>
-        <img id="targetIMG" style="width:512px;" />
+        <img id="targetIMG" style="max-width: 512px;"/>
         <form action="/update" method="post" enctype="multipart/form-data">
             description<input id="formDescription" type="text" name="description" value="value of description" /><br />
             sortorder<input id="formSortOrder" type="text" name="sortorder" value="name=sortorder" /><br />

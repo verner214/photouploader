@@ -79,18 +79,39 @@ app.post('/delete', function (req, res, next) {
 
         var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
 
-        var entGen = azure.TableUtilities.entityGenerator;
-        var task = {
-            PartitionKey: entGen.String(fields.partitionkey),//obligatorisk
-            RowKey: entGen.String(fields.rowkey)//obligatorisk
-        };//obs! måste ta bort tillhörande blobbar me.
-        blobSvc.deleteBlob(containerName, 'myblob', function (err, response) {
+        tableSvc.retrieveEntity(tableName, fields.partitionkey, fields.rowkey, function (err, result, response) {
             if (err) throw err;
-        });
-        tableSvc.deleteEntity(tableName, task, function (error, result, response) {
-            if (err) throw err;
-            var fullUrl = req.protocol + '://' + req.get('host');
-            res.redirect(fullUrl + "/list.html");
+//            console.log(result['mediumName']['_']);
+            var blobService = azure.createBlobService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+
+//hittade ingen metod för att ta bort blob if exists
+            if (result['thumbName']) {
+                blobService.deleteBlob(containerName, result['thumbName']['_'], function (err, response) {
+                    console.log("del blb " + result['thumbName']['_'] + ", err?=" + JSON.stringify(err));
+                });
+            }
+            if (result['mediumName']) {
+                blobService.deleteBlob(containerName, result['mediumName']['_'], function (err, response) {
+                    console.log("del blb " + result['mediumName']['_'] + ", err?=" + JSON.stringify(err));
+                });
+            }
+            if (result['imgName']) {
+                blobService.deleteBlob(containerName, result['imgName']['_'], function (err, response) {
+                    console.log("del blb " + result['imgName']['_'] + ", err?=" + JSON.stringify(err));
+                });
+            }
+
+//ta bort tabellen till sist
+            var entGen = azure.TableUtilities.entityGenerator;
+            var task = {
+                PartitionKey: entGen.String(fields.partitionkey),//obligatorisk
+                RowKey: entGen.String(fields.rowkey)//obligatorisk
+            };//obs! måste ta bort tillhörande blobbar me.
+            tableSvc.deleteEntity(tableName, task, function (error, result, response) {
+                if (err) throw err;
+                var fullUrl = req.protocol + '://' + req.get('host');
+                res.redirect(fullUrl + "/list.html");
+            });
         });
     });
 });//slut delete
