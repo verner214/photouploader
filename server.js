@@ -132,7 +132,7 @@ app.post('/upload', function (req, res, next) {
                     if (err) return callback(err);
                     fs.unlink(newFilePath, function (err) {
                         if (err) return callback(err);
-                        callback(null, restult);
+                        callback(null, result);
                     });
                 });
             });
