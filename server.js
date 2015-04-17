@@ -84,6 +84,9 @@ app.post('/delete', function (req, res, next) {
             PartitionKey: entGen.String(fields.partitionkey),//obligatorisk
             RowKey: entGen.String(fields.rowkey)//obligatorisk
         };//obs! måste ta bort tillhörande blobbar me.
+        blobSvc.deleteBlob(containerName, 'myblob', function (err, response) {
+            if (err) throw err;
+        });
         tableSvc.deleteEntity(tableName, task, function (error, result, response) {
             if (err) throw err;
             var fullUrl = req.protocol + '://' + req.get('host');
@@ -116,7 +119,7 @@ app.post('/upload', function (req, res, next) {
             blobService.createBlockBlobFromLocalFile(containerName, filePath, filePath, function (err, result) {
                 if (err) return callback(err);
                 var imgUrl = blobService.getUrl(containerName, filePath, null, hostName);
-                callback(null, imgUrl);
+                callback(null, { url: imgUrl, name: filePath });
             });
         }
 
@@ -168,9 +171,12 @@ app.post('/upload', function (req, res, next) {
                     PartitionKey: entGen.String(partitionKey),//obligatorisk
                     RowKey: entGen.String(uuid()),//obligatorisk
                     description: entGen.String('här är nya beskrivningen'),
-                    imgURL: entGen.String(results[0]),
-                    thumbURL: entGen.String(results[1]),
-                    mediumURL: entGen.String(results[2]),
+                    imgURL: entGen.String(results[0].url),
+                    imgName: entGen.String(results[0].name),
+                    thumbURL: entGen.String(results[1].url),
+                    thumbName: entGen.String(results[1].name),
+                    mediumURL: entGen.String(results[2].url),
+                    mediumName: entGen.String(results[2].name),
                 };
 
                 tableSvc.insertEntity(tableName, task, function (err, result, response) {
