@@ -1,3 +1,8 @@
+/*
+C:\temp\skakrympas>node c:\own\node\photouploader\krympajpg.js
+antal filer=2
+171166001_10.jpg
+*/
 var fs = require('fs');    //File System-needed for renaming file etc
 var tufu = require("./tufuOwn");//gör thumbnails
 
