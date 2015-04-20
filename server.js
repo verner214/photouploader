@@ -57,11 +57,13 @@ app.post('/update', function (req, res, next) {
         var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
 
         var entGen = azure.TableUtilities.entityGenerator;
+
+        console.log(fields.textarea123);
         var task = {
             PartitionKey: entGen.String(fields.partitionkey),//obligatorisk
             RowKey: entGen.String(fields.rowkey),//obligatorisk
             description: entGen.String(fields.description),
-            textarea: entGen.String(fields.textarea),
+            textarea: entGen.String(fields.textarea123),
 //            hidden: entGen.Boolean(fields.hidden),/*använder string bara för att det inte ska krocka med att den var string förr*/
             hidden: entGen.String(fields.hidden ? 'on' : 'false'),
             sortorder: entGen.String(fields.sortorder),

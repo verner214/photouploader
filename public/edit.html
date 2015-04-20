@@ -36,8 +36,9 @@
                     if (data.sortorder) {
                         document.getElementById('formSortOrder').value = data.sortorder;
                     }
+                    //alert(data.mediumURL);
                     if (data.textarea) {
-                        document.getElementById('textarea').value = data.textarea;
+                        document.getElementById('textarea123').value = data.textarea;
                     }
                     if (data.hidden) {
                         document.getElementById('formHidden').checked = (data.hidden.localeCompare('false') === 0 ? false : true);
@@ -76,12 +77,12 @@
         <form action="/update" method="post" enctype="multipart/form-data" id="myform">
             description<input id="formDescription" type="text" name="description" value="value of description" /><br />
             sortorder<input id="formSortOrder" type="text" name="sortorder" value="name=sortorder" /><br />
-            hidden<input id="formHidden" type="checkbox" name="hidden" /><br />
+            show<input id="formHidden" type="checkbox" name="hidden" /><br />
             <input id="formRowKey" type="hidden" name="rowkey" />
             <input id="formPartitionKey" type="hidden" name="partitionkey" />
             <input type="submit" value="Update" />
+            <textarea form="myform" name="textarea123" id="textarea123" rows="10" cols="35" wrap="soft"></textarea>
         </form>
-        <textarea form="myform" name="textarea" id="textarea" rows="10" cols="35" wrap="soft"></textarea>
 </div>
 </body>
 </html>
