@@ -61,6 +61,9 @@ app.post('/update', function (req, res, next) {
             PartitionKey: entGen.String(fields.partitionkey),//obligatorisk
             RowKey: entGen.String(fields.rowkey),//obligatorisk
             description: entGen.String(fields.description),
+            textarea: entGen.String(fields.textarea),
+            hidden: entGen.String(fields.hidden),
+            sortorder: entGen.String(fields.sortorder),
         };
         tableSvc.mergeEntity(tableName, task, function (error, result, response) {
             if (err) throw err;
