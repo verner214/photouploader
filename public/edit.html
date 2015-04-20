@@ -39,7 +39,7 @@
                     if (data.textarea) {
                         document.getElementById('textarea').value = data.textarea;
                     }
-                    alert('hidden=' + data.hidden);
+                    alert('hidden=' + data.hidden + data.hidden.localCompare('false'));
                     if (data.hidden) {
                         document.getElementById('formHidden').checked = (data.hidden.localCompare('false') === 0 ? false : true);
                     }
