@@ -39,8 +39,9 @@
                     if (data.textarea) {
                         document.getElementById('textarea').value = data.textarea;
                     }
+                    alert('hidden=' + data.hidden);
                     if (data.hidden) {
-                        document.getElementById('formHidden').value = data.hidden;
+                        document.getElementById('formHidden').checked = data.hidden;
                     }
                     //visa mediumURL istället för imgURL i första hand
                     if (data.mediumURL) {
