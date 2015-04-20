@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" href="own.css" type="text/css">
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script src="jquery-1.11.2.js"></script>
+	<div>
+		<ul id="ul_debug">
+		</ul>
+    </div>
+    <div>
+        <form action="/update" method="post" enctype="multipart/form-data" id="myform">
+            description<input id="formDescription" type="text" name="description" /><br />
+            sortorder<input id="formSortOrder" type="text" name="sortorder" /><br />
+            hidden<input id="formHidden" type="checkbox" name="hidden" value="1"/><br />
+            <input type="submit" value="formTest" />
+        </form>
+        <textarea form="myform" name="textarea" id="textarea" rows="10" cols="35" wrap="soft"></textarea>
+</div>
+</body>
+</html>

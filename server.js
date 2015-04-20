@@ -62,7 +62,8 @@ app.post('/update', function (req, res, next) {
             RowKey: entGen.String(fields.rowkey),//obligatorisk
             description: entGen.String(fields.description),
             textarea: entGen.String(fields.textarea),
-            hidden: entGen.String(fields.hidden.checked),
+//            hidden: entGen.Boolean(fields.hidden),/*använder string bara för att det inte ska krocka med att den var string förr*/
+            hidden: entGen.String(fields.hidden ? 'on' : 'false'),
             sortorder: entGen.String(fields.sortorder),
         };
         tableSvc.mergeEntity(tableName, task, function (error, result, response) {
