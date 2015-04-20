@@ -41,7 +41,7 @@
                     }
                     alert('hidden=' + data.hidden);
                     if (data.hidden) {
-                        document.getElementById('formHidden').checked = data.hidden;
+                        document.getElementById('formHidden').checked = (data.hidden.localCompare('false') === 0 ? false : true);
                     }
                     //visa mediumURL istället för imgURL i första hand
                     if (data.mediumURL) {
