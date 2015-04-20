@@ -62,7 +62,7 @@ app.post('/update', function (req, res, next) {
             RowKey: entGen.String(fields.rowkey),//obligatorisk
             description: entGen.String(fields.description),
             textarea: entGen.String(fields.textarea),
-            hidden: entGen.String(fields.hidden),
+            hidden: entGen.String(fields.hidden.checked),
             sortorder: entGen.String(fields.sortorder),
         };
         tableSvc.mergeEntity(tableName, task, function (error, result, response) {
