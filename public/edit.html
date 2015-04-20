@@ -39,9 +39,9 @@
                     if (data.textarea) {
                         document.getElementById('textarea').value = data.textarea;
                     }
-                    alert('hidden=' + data.hidden + data.hidden.localCompare('false'));
+                    alert('hidden=' + data.hidden + data.hidden.localeCompare('false'));
                     if (data.hidden) {
-                        document.getElementById('formHidden').checked = (data.hidden.localCompare('false') === 0 ? false : true);
+                        document.getElementById('formHidden').checked = (data.hidden.localeCompare('false') === 0 ? false : true);
                     }
                     //visa mediumURL istället för imgURL i första hand
                     if (data.mediumURL) {
